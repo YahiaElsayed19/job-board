@@ -10,8 +10,14 @@ class JobController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request) {
-        $filters = $request->only(['search', 'min_salary', 'max_salary', 'experience', 'category']);
-        return view('job.index', ['jobs' => Job::filter($filters)->get()]);
+        $filters = $request->only(['search', 'min_salary', 'max_salary', 'experience', 'category', 'company_name']);
+        return view(
+            'job.index',
+            [
+                'jobs' => Job::with('employer')
+                    ->filter($filters)->get()
+            ]
+        );
     }
 
     /**
@@ -32,7 +38,7 @@ class JobController extends Controller {
      * Display the specified resource.
      */
     public function show(Job $job) {
-        return view('job.show', compact('job'));
+        return view('job.show', ['job' => $job->load('employer.jobs')]);
     }
 
     /**
